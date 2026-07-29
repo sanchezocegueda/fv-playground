@@ -9,25 +9,6 @@ def health_check() -> dict:
     """Perform a health check on the server."""
     return {"status": "ok"}
 
-@app.post("/file_upload")
-async def file_upload(file: UploadFile=File()) -> dict:
-    """Accept a file upload and return basic metadata about it.
-    
-    Parameters:
-        - file (UploadFile): The file to be uploaded
-    
-    Returns: 
-        - metadata (dict): JSON with file metadata
-
-            
-    """
-    contents = await file.read()
-    metadata = {
-        "file_name": file.filename,
-        "file_size": len(contents)
-    }
-
-    return metadata
 
 @app.post("/solve")
 async def solve(file: UploadFile=File()) -> dict:
