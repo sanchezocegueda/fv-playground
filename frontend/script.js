@@ -64,6 +64,10 @@ function renderFileInfo(result) {
     preview.textContent = shown.join("\n");
 }
 
+const API_BASE_URL = location.hostname.endsWith("github.io")
+    ? "https://fv-playground-backend.onrender.com" // verify/update after first Render deploy
+    : "";
+
 const fileInput = document.getElementById("cnf-file");
 const resultsEl = document.getElementById("results");
 
@@ -107,7 +111,7 @@ document.getElementById("upload_form").addEventListener("submit", async (e) => {
 
     let response;
     try {
-        response = await fetch("/solve", {
+        response = await fetch(`${API_BASE_URL}/solve`, {
             method: "POST",
             body: formData,
         });

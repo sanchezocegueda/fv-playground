@@ -1,11 +1,19 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from solver import solve_cnf
 
 app = FastAPI(title="FV Playground")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://sanchezocegueda.github.io"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 
