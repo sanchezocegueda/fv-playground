@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>FV Playground</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>FV Playground</h1>
@@ -14,7 +15,17 @@
         <button type="submit">Solve</button>
     </form>
 
-    <div id="results"></div>
+    <div id="file-info" class="panel" hidden>
+        <h2>File preview</h2>
+        <dl class="stats">
+            <div><dt>Variables</dt><dd id="file-info-vars">—</dd></div>
+            <div><dt>Clauses</dt><dd id="file-info-clauses">—</dd></div>
+        </dl>
+        <p id="file-info-message" class="muted" hidden></p>
+        <pre id="file-info-preview"></pre>
+    </div>
+
+    <div id="results" class="panel" hidden></div>
 
     <script src="script.js"></script>
 </body>
