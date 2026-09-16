@@ -12,7 +12,11 @@ def solve_cnf(cnf_contents: str) -> dict:
     Returns: 
         - result (dict): JSON with SAT/UNSAT and SAT variable assignments (if it exists).
 
-    Function that accepts a DIMACS-CNF file and returns a SAT/UNSAT plus SAT variable assignment (if it exists)."""
+    Function that accepts a DIMACS-CNF file and returns a SAT/UNSAT plus SAT variable assignment (if it exists).
+
+    Raises:
+        - ValueError: if cnf_contents is not valid DIMACS-CNF text.
+    """
 
     formula = CNF()
     formula.from_string(cnf_contents)
