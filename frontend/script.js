@@ -68,8 +68,14 @@ const API_BASE_URL = location.hostname.endsWith("github.io")
     ? "https://fv-playground-backend.onrender.com" // verify/update after first Render deploy
     : "";
 
+function formatElapsed(seconds) {
+    return `${seconds.toFixed(2)}s`;
+}
+
 const fileInput = document.getElementById("cnf-file");
 const resultsEl = document.getElementById("results");
+const progressEl = document.getElementById("progress");
+const solveButton = document.getElementById("solve-button");
 
 fileInput.addEventListener("change", async () => {
     resultsEl.hidden = true;
@@ -109,43 +115,51 @@ document.getElementById("upload_form").addEventListener("submit", async (e) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    let response;
+    const startTime = performance.now();
+    progressEl.hidden = false;
+    solveButton.disabled = true;
+
     try {
-        response = await fetch(`${API_BASE_URL}/solve`, {
-            method: "POST",
-            body: formData,
-        });
-    } catch (err) {
-        resultsEl.className = "panel result-error";
-        resultsEl.textContent = "Could not reach the solver. Is the server running?";
-        resultsEl.hidden = false;
-        return;
-    }
+        let response;
+        try {
+            response = await fetch(`${API_BASE_URL}/solve`, {
+                method: "POST",
+                body: formData,
+            });
+        } catch (err) {
+            resultsEl.className = "panel result-error";
+            resultsEl.textContent = "Could not reach the solver. Is the server running?";
+            return;
+        }
 
-    let body;
-    try {
-        body = await response.json();
-    } catch (err) {
-        resultsEl.className = "panel result-error";
-        resultsEl.textContent = "Received an unexpected response from the solver.";
-        resultsEl.hidden = false;
-        return;
-    }
+        let body;
+        try {
+            body = await response.json();
+        } catch (err) {
+            resultsEl.className = "panel result-error";
+            resultsEl.textContent = "Received an unexpected response from the solver.";
+            return;
+        }
 
-    if (!response.ok) {
-        resultsEl.className = "panel result-error";
-        resultsEl.textContent = `Error: ${body.detail || "unknown error"}`;
-        resultsEl.hidden = false;
-        return;
-    }
+        const elapsed = formatElapsed((performance.now() - startTime) / 1000);
 
-    if (body.sat) {
-        resultsEl.className = "panel result-sat";
-        const assignment = body.model.map(formatLiteral).join(", ");
-        resultsEl.textContent = `SAT — satisfying assignment: ${assignment}`;
-    } else {
-        resultsEl.className = "panel result-unsat";
-        resultsEl.textContent = "UNSAT";
+        if (!response.ok) {
+            resultsEl.className = "panel result-error";
+            resultsEl.textContent = `Error: ${body.detail || "unknown error"}\nQuery took ${elapsed} to finish.`;
+            return;
+        }
+
+        if (body.sat) {
+            resultsEl.className = "panel result-sat";
+            const assignment = body.model.map(formatLiteral).join(", ");
+            resultsEl.textContent = `SAT — satisfying assignment: ${assignment}\nQuery took ${elapsed} to finish.`;
+        } else {
+            resultsEl.className = "panel result-unsat";
+            resultsEl.textContent = `UNSAT\nQuery took ${elapsed} to finish.`;
+        }
+    } finally {
+        progressEl.hidden = true;
+        solveButton.disabled = false;
+        resultsEl.hidden = false;
     }
-    resultsEl.hidden = false;
 });

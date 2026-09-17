@@ -12,7 +12,7 @@
     <form id="upload_form">
         <label for="cnf-file">upload file here</label>
         <input type="file" id="cnf-file">
-        <button type="submit">Solve</button>
+        <button type="submit" id="solve-button">Solve</button>
     </form>
 
     <div id="file-info" class="panel" hidden>
@@ -23,6 +23,11 @@
         </dl>
         <p id="file-info-message" class="muted" hidden></p>
         <pre id="file-info-preview"></pre>
+    </div>
+
+    <div id="progress" hidden>
+        <div class="progress-track"><div class="progress-bar"></div></div>
+        <p class="muted">Solving… (first request after idle may take up to a minute)</p>
     </div>
 
     <div id="results" class="panel" hidden></div>
